@@ -1,0 +1,26 @@
+import './globals.css';
+
+export const metadata = {
+  title: {
+    default: 'Hridesh Sapkota - Podcast Producer',
+    template: '%s | Hridesh Sapkota'
+  },
+  description: '4+ years experience in podcast production, editing, and growth strategies. Audio & video editing, distribution, and marketing services.',
+  keywords: ['podcast producer', 'audio editing', 'video editing', 'podcast marketing', 'Nepal podcast'],
+  authors: [{ name: 'Hridesh Sapkota' }],
+  creator: 'Hridesh Sapkota',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className="min-h-screen bg-background font-sans antialiased">
+        {children}
+      </body>
+    </html>
+  );
+}
