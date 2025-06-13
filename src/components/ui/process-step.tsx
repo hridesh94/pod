@@ -13,6 +13,7 @@ interface ProcessStepProps {
   imageUrl?: string;
   isActive?: boolean;
   className?: string;
+  progress?: number; // Added progress prop (0-100)
 }
 
 export const ProcessStep = ({
@@ -23,6 +24,7 @@ export const ProcessStep = ({
   imageUrl,
   isActive = false,
   className,
+  progress = 0 // Default to 0
 }: ProcessStepProps) => {
   const renderIcon = () => {
     switch (icon) {
@@ -73,45 +75,56 @@ export const ProcessStep = ({
         className
       )}
     >
-      {/* Step Number */}
+      {/* Step Number - more subtle */}
       <div 
         className={cn(
-          "w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-6 z-10 relative",
+          "w-8 h-8 rounded-full flex items-center justify-center text-base font-medium mb-5 z-10 relative",
           isActive 
-            ? "bg-primary-500 text-white" 
-            : "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white border-2 border-primary-500"
+            ? "bg-primary-500 text-white shadow-sm" 
+            : "bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 border border-neutral-200 dark:border-neutral-700",
         )}
       >
         {stepNumber}
       </div>
       
-      {/* Content Box */}
+      {/* Content Box - focus on content */}
       <motion.div 
-        whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        whileHover={{ y: -2 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         className={cn(
-          "bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-md border border-neutral-100 dark:border-neutral-700",
-          isActive && "border-primary-500 dark:border-primary-500"
+          "bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-sm",
+          isActive 
+            ? "border-l-4 border-primary-500 dark:border-primary-500 border-t border-r border-b border-neutral-100 dark:border-neutral-700" 
+            : "border border-neutral-100 dark:border-neutral-700"
         )}
       >
-        <div className="flex items-start mb-4">
+        {/* No prominent color indicators */}
+
+        <div className="mb-4">
+          {/* Title stands out prominently */}
+          <h3 className="text-xl font-display font-semibold text-neutral-900 dark:text-white mb-2">
+            {title}
+          </h3>
+          
+          {/* Icon integrated into content flow */}
           {icon && (
-            <div className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center mr-4",
-              isActive ? "bg-primary-500 text-white" : "bg-primary-50 dark:bg-primary-900/20 text-primary-500"
-            )}>
-              {renderIcon()}
+            <div className="flex items-center mb-3">
+              <div className={cn(
+                "w-5 h-5 flex items-center justify-center mr-2",
+                "text-primary-500 dark:text-primary-400"
+              )}>
+                {renderIcon()}
+              </div>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">
+                Step {stepNumber} of 8
+              </p>
             </div>
           )}
           
-          <h3 className="text-xl font-display font-semibold text-neutral-900 dark:text-white">
-            {title}
-          </h3>
+          <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+            {description}
+          </p>
         </div>
-        
-        <p className="text-neutral-700 dark:text-neutral-300 mb-4">
-          {description}
-        </p>
         
         {imageUrl && (
           <div className="mt-4 relative h-40 rounded-lg overflow-hidden">

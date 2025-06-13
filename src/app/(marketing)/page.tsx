@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FadeInUp } from "../../components/animations/fade-in-up";
 import { Button } from "../../components/ui/button";
@@ -9,15 +11,19 @@ import { ParallaxSection } from "../../components/animations/parallax-section";
 import { AudioWaveform } from "../../components/animations/audio-waveform";
 import { Header } from "../../components/sections/header";
 import { Footer } from "../../components/sections/footer";
-import { getPersonSchema, getOrganizationSchema } from "@/lib/schema";
-import { generateMetadata } from "@/lib/seo";
 import { ScrollProgress } from "@/components/animations/scroll-progress";
+import { ProcessStep } from "@/components/ui/process-step";
+import { ProcessTimeline } from "@/components/animations/process-timeline";
+import { useProcessScroll } from "@/lib/hooks/use-process-scroll";
+import { motion } from "framer-motion";
 
 import { generateJsonLd } from './metadata';
 import { JsonLdScript } from '@/components/shared/json-ld-script';
 
 export default function HomePage() {
   const jsonLdData = generateJsonLd();
+  // Track active process steps based on scroll position
+  const activeSteps = useProcessScroll(PROCESS_STEPS.length);
   
   return (
     <main>
@@ -163,52 +169,31 @@ export default function HomePage() {
       </Section>
 
       {/* Process Section */}
-      <Section id="process">
-        <div className="text-center mb-16">
+      <Section id="process" className="bg-neutral-50 dark:bg-neutral-900/50">
+        <div className="text-center mb-12">
           <FadeInUp>
-            <h2 className="text-3xl font-display font-bold mb-4">My Process</h2>
+            <h2 className="text-3xl font-display font-bold mb-4">My Production Process</h2>
             <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
-              A streamlined approach to creating exceptional podcasts
+              A proven framework for creating exceptional podcasts
             </p>
           </FadeInUp>
         </div>
 
-        <div className="relative">
-          {/* Process timeline line */}
-          <div className="absolute top-0 bottom-0 left-4 md:left-1/2 w-0.5 bg-primary-100 dark:bg-neutral-700 transform -translate-x-1/2"></div>
+        <div className="relative max-w-3xl mx-auto">
+          {/* Animated Process timeline - minimal and subtle */}
+          <ProcessTimeline totalSteps={PROCESS_STEPS.length} position="left" className="absolute opacity-40" />
 
-          <div className="space-y-12">
+          <div className="space-y-12 ml-6 md:ml-8">
             {PROCESS_STEPS.map((step, index) => (
               <FadeInUp key={step.id} delay={index * 0.1}>
-                <div
-                  className={`flex flex-col md:flex-row gap-8 items-center ${
-                    index % 2 === 0 ? "" : "md:flex-row-reverse"
-                  }`}
-                >
-                  <div className="w-full md:w-1/2 flex items-center">
-                    <div
-                      className={`w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center z-10 ${
-                        index % 2 === 0
-                          ? "ml-0 md:ml-auto mr-6 md:mr-0"
-                          : "ml-0 md:ml-0 mr-6 md:mr-auto"
-                      }`}
-                    >
-                      {step.id}
-                    </div>
-                    <div
-                      className={`bg-white dark:bg-neutral-800 p-6 rounded-lg shadow-md flex-1 ${
-                        index % 2 === 0 ? "text-left" : "text-left md:text-right"
-                      }`}
-                    >
-                      <h3 className="text-xl font-semibold mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-neutral-600 dark:text-neutral-400">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/2"></div>
+                <div data-step={step.id}>
+                  <ProcessStep
+                    stepNumber={step.id}
+                    title={step.title}
+                    description={step.description}
+                    icon={index % 4 === 0 ? 'mic' : index % 4 === 1 ? 'edit' : index % 4 === 2 ? 'upload' : 'chart'} 
+                    isActive={activeSteps[index]} // Use the active state from scroll tracking
+                  />
                 </div>
               </FadeInUp>
             ))}
@@ -217,41 +202,98 @@ export default function HomePage() {
       </Section>
 
       {/* Portfolio Preview Section */}
-      <Section id="portfolio" className="bg-neutral-900 text-white">
+      <Section id="portfolio" className="bg-gradient-to-b from-neutral-900 to-neutral-800 text-white">
         <div className="text-center mb-16">
           <FadeInUp>
-            <h2 className="text-3xl font-display font-bold mb-4">My Work</h2>
+            <h2 className="text-3xl font-display font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-300 via-white to-accent-300">
+                Featured Work
+              </span>
+            </h2>
             <p className="max-w-2xl mx-auto text-neutral-300">
-              Check out some of my recent podcast production projects
+              Recent podcast productions that showcase my expertise
             </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-6 rounded-full"></div>
           </FadeInUp>
         </div>
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {[
+            { 
+              title: "Business Breakthrough", 
+              type: "Interview Series", 
+              color: "from-accent-500 to-accent-600",
+              bgAccent: "bg-amber-300",
+              icon: "🎙️",
+              description: "Weekly interviews with successful entrepreneurs"
+            },
+            { 
+              title: "Tech Talk Weekly", 
+              type: "Audio & Video Podcast", 
+              color: "from-primary-400 to-primary-500",
+              bgAccent: "bg-sky-300",
+              icon: "💻",
+              description: "In-depth discussions on emerging technologies"
+            },
+            { 
+              title: "Mindful Entrepreneurship", 
+              type: "Narrative Podcast", 
+              color: "from-purple-500 to-purple-600",
+              bgAccent: "bg-purple-300",
+              icon: "🧠",
+              description: "Stories of founders balancing success & wellbeing"
+            }
+          ].map((project, index) => (
             <StaggerItem key={index}>
-              <div className="bg-neutral-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform">
-                <div className="h-48 bg-gradient-to-br from-primary-900 to-primary-500"></div>
+              {/* Import motion from Framer Motion at top of file */}
+              <div 
+                className="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group bg-white dark:bg-neutral-800 h-full"
+              >
+                {/* Project Visual - More vibrant with clear contrast */}
+                <div className={`h-48 bg-gradient-to-br ${project.color} flex items-center justify-center relative p-4 overflow-hidden`}>
+                  {/* Enhanced lighting effects */}
+                  <div className="absolute top-0 left-0 w-full h-full opacity-30 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.8),transparent_60%)]"></div>
+                  
+                  {/* Decorative elements */}
+                  <div className={`absolute -top-6 -right-6 w-24 h-24 rounded-full ${project.bgAccent} opacity-20 blur-xl`}></div>
+                  <div className={`absolute -bottom-10 -left-10 w-32 h-32 rounded-full ${project.bgAccent} opacity-10 blur-xl`}></div>
+                  
+                  {/* Icon with animated background glow on hover */}
+                  <div className="relative z-10 transform transition-transform group-hover:scale-110 duration-300">
+                    <div className={`absolute inset-0 ${project.bgAccent} opacity-20 rounded-full blur-md scale-90 group-hover:scale-125 group-hover:opacity-40 transition-all duration-300`}></div>
+                    <span className="text-6xl relative z-10">{project.icon}</span>
+                  </div>
+                </div>
+                
+                {/* Content Area - More readable with better contrast */}
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">
-                    Project Name {index + 1}
+                  <h3 className="text-xl font-display font-bold mb-1 text-neutral-900 dark:text-white">
+                    {project.title}
                   </h3>
-                  <p className="text-neutral-400 mb-4">
-                    Audio & Video Production
+                  <div className="flex items-center mb-3">
+                    <span className="text-sm font-medium px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
+                      {project.type}
+                    </span>
+                  </div>
+                  <p className="text-neutral-700 dark:text-neutral-300 mb-4 text-sm">
+                    {project.description}
                   </p>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center pt-2 border-t border-neutral-100 dark:border-neutral-700">
                     <Link
                       href="/portfolio"
-                      className="text-primary-500 hover:underline"
+                      className="text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 font-medium flex items-center"
                     >
                       View Project
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
                     </Link>
                     <AudioWaveform
-                      className="h-8 w-24"
-                      barCount={8}
+                      className="h-6 w-16"
+                      barCount={6}
                       barWidth={2}
-                      barGap={1}
-                      barMinHeight={3}
+                      barGap={2}
+                      barMinHeight={2}
                       barMaxHeight={10}
                       color="#3b82f6"
                     />
@@ -262,11 +304,33 @@ export default function HomePage() {
           ))}
         </StaggerContainer>
 
-        <div className="mt-12 text-center">
+        <div className="mt-14 text-center">
           <FadeInUp>
-            <Button asChild isAnimated>
-              <Link href="/portfolio">View Full Portfolio</Link>
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              className="inline-block"
+            >
+              <Button 
+                asChild 
+                isAnimated 
+                variant="secondary" 
+                className="px-5 py-2 text-sm font-medium shadow-md group"
+              >
+                <Link href="/portfolio" className="flex items-center">
+                  <span>View Full Portfolio</span>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-transform" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </Link>
+              </Button>
+            </motion.div>
           </FadeInUp>
         </div>
       </Section>
