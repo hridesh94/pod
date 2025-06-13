@@ -26,7 +26,7 @@
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.274.0",
     "next": "14.0.0",
-    "next-sanity": "^5.4.6",
+    "next-sanity": "^9.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
