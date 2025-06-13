@@ -14,11 +14,15 @@ import { Footer } from "../../components/sections/footer";
 import { ScrollProgress } from "@/components/animations/scroll-progress";
 import { ProcessStep } from "@/components/ui/process-step";
 import { ProcessTimeline } from "@/components/animations/process-timeline";
+import { SubwayProcessTimeline } from "@/components/animations/subway-process-timeline";
+import { SubwayProcessStep } from "@/components/ui/subway-process-step";
 import { useProcessScroll } from "@/lib/hooks/use-process-scroll";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 import { generateJsonLd } from './metadata';
 import { JsonLdScript } from '@/components/shared/json-ld-script';
+import { HorizontalProcessTimeline } from "../../components/animations/horizontal-process-timeline";
 
 export default function HomePage() {
   const jsonLdData = generateJsonLd();
@@ -168,36 +172,20 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Process Section */}
-      <Section id="process" className="bg-neutral-50 dark:bg-neutral-900/50">
+      {/* Process Section - Updated with horizontal timeline */}
+      <Section id="process" className="bg-white dark:bg-neutral-900 overflow-hidden relative">
         <div className="text-center mb-12">
           <FadeInUp>
             <h2 className="text-3xl font-display font-bold mb-4">My Production Process</h2>
             <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
-              A proven framework for creating exceptional podcasts
+              A streamlined 6-step framework that transforms your podcast vision into professional reality
             </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-6 rounded-full"></div>
           </FadeInUp>
         </div>
 
-        <div className="relative max-w-3xl mx-auto">
-          {/* Animated Process timeline - minimal and subtle */}
-          <ProcessTimeline totalSteps={PROCESS_STEPS.length} position="left" className="absolute opacity-40" />
-
-          <div className="space-y-12 ml-6 md:ml-8">
-            {PROCESS_STEPS.map((step, index) => (
-              <FadeInUp key={step.id} delay={index * 0.1}>
-                <div data-step={step.id}>
-                  <ProcessStep
-                    stepNumber={step.id}
-                    title={step.title}
-                    description={step.description}
-                    icon={index % 4 === 0 ? 'mic' : index % 4 === 1 ? 'edit' : index % 4 === 2 ? 'upload' : 'chart'} 
-                    isActive={activeSteps[index]} // Use the active state from scroll tracking
-                  />
-                </div>
-              </FadeInUp>
-            ))}
-          </div>
+        <div className="relative max-w-full mx-auto">
+          <HorizontalProcessTimeline />
         </div>
       </Section>
 
