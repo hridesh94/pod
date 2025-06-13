@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 214 84% 19%; /* Updated to match #102E50 */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 35 92% 50%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 9 64% 45%; /* Updated to match #BE3D2A */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+  }
+}
+
+/* Premium design effects */
+@layer components {
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  }
+  
+  .premium-shadow {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .premium-shadow-lg {
+    box-shadow: 0 15px 40px rgba(16, 46, 80, 0.1);
+  }
+  
+  .premium-gradient {
+    background-image: linear-gradient(to bottom right, #102E50, #0A1C32);
+  }
+  
+  .accent-gradient {
+    background-image: linear-gradient(to bottom right, #CF4733, #BE3D2A);
+  }
+  
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 214 100% 50%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 38.8 92.6% 50.2%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Premium design elements */
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+  
+  .premium-shadow {
+    @apply shadow-[0_8px_30px_rgba(0,0,0,0.08)];
+  }
+  
+  .premium-shadow-lg {
+    @apply shadow-[0_15px_40px_rgba(16,46,80,0.1)];
+  }
+  
+  .premium-gradient {
+    @apply bg-gradient-to-br from-primary-500 to-primary-700;
+  }
+  
+  .accent-gradient {
+    @apply bg-gradient-to-br from-accent-400 to-accent-600;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+}
+
+/* Custom scrollbar */
+@layer utilities {
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+  h1 {
+    @apply text-hero;
+  }
+  h2 {
+    @apply text-display;
+  }
+  h3 {
+    @apply text-heading;
+  }
+  h4 {
+    @apply text-subheading;
+  }
+}
+
+/* Premium design effects */
+@layer components {
+  .glass-card {
+    @apply bg-white bg-opacity-70 backdrop-blur-lg border border-white/20 shadow-xl;
+  }
+  
+  .premium-shadow {
+    @apply shadow-[0_8px_30px_rgb(0,0,0,0.08)];
+  }
+  
+  .premium-shadow-lg {
+    @apply shadow-[0_15px_40px_rgb(16,46,80,0.1)];
+  }
+  
+  .premium-gradient {
+    @apply bg-gradient-to-br from-primary-500 to-primary-700;
+  }
+  
+  .accent-gradient {
+    @apply bg-gradient-to-br from-accent-400 to-accent-600;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+}
+
+/* Scrollbar styling */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-track {
+    @apply bg-neutral-100;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb {
+    @apply bg-primary-200 rounded-full hover:bg-primary-300;
+  }
+}

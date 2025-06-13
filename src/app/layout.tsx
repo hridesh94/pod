@@ -54,12 +54,15 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="min-h-screen bg-neutral-50 text-neutral-900 font-sans antialiased selection:bg-primary-500 selection:text-white">
+      <body className="min-h-screen bg-neutral-50 text-neutral-800 font-sans antialiased selection:bg-primary-500 selection:text-white overflow-x-hidden">
         {/* Analytics provider is conditionally rendered only when GA ID is available */}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && 
           process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID !== 'undefined' && (
           <AnalyticsProvider gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         )}
+        <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-b from-primary-50/70 to-transparent -z-10"></div>
+        <div className="absolute top-[25%] right-[-15%] w-[500px] h-[500px] rounded-full bg-accent-500/5 blur-3xl -z-10"></div>
+        <div className="absolute top-[60%] left-[-10%] w-[400px] h-[400px] rounded-full bg-primary-500/5 blur-3xl -z-10"></div>
         <Header />
         <div className="pt-16 md:pt-20">
           <main>{children}</main>

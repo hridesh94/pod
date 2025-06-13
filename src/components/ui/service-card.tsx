@@ -25,14 +25,16 @@ export const ServiceCard = ({
 }: ServiceCardProps) => {
   return (
     <motion.div 
-      whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
+      whileHover={{ y: -8, boxShadow: '0 25px 35px -5px rgba(16, 46, 80, 0.12), 0 15px 15px -5px rgba(16, 46, 80, 0.08)' }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className={cn(
-        "bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-md transition-all duration-300",
+        "bg-white dark:bg-neutral-800 rounded-xl p-8 shadow-lg border border-neutral-100 transition-all duration-300 relative overflow-hidden",
         className
       )}
     >
-      <div className="w-14 h-14 mb-5 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-400"></div>
+      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-primary-500/5 -mr-8 -mt-8 z-0"></div>
+      <div className="w-16 h-16 mb-6 rounded-lg premium-gradient flex items-center justify-center text-white shadow-lg relative z-10">
         {icon === "settings" && (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
             <path fillRule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clipRule="evenodd" />
@@ -60,17 +62,19 @@ export const ServiceCard = ({
         )}
       </div>
       
-      <h3 className="text-xl font-display font-semibold mb-3 text-neutral-900 dark:text-white">{title}</h3>
+      <h3 className="text-xl font-display font-semibold mb-4 text-primary-600 dark:text-white relative z-10">{title}</h3>
       
-      <p className="text-neutral-600 dark:text-neutral-300 mb-5">{description}</p>
+      <p className="text-neutral-600 dark:text-neutral-300 mb-6 leading-relaxed relative z-10">{description}</p>
       
       {features.length > 0 && (
-        <ul className="space-y-2 mb-6">
+        <ul className="space-y-3 mb-8 relative z-10">
           {features.map((feature, index) => (
             <li key={index} className="flex items-start">
-              <svg className="w-5 h-5 text-primary-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-              </svg>
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                <svg className="w-4 h-4 text-primary-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                </svg>
+              </span>
               <span className="text-sm text-neutral-700 dark:text-neutral-300">{feature}</span>
             </li>
           ))}
@@ -80,10 +84,13 @@ export const ServiceCard = ({
       {href && (
         <Link 
           href={href} 
-          className="inline-flex items-center text-primary-500 hover:text-primary-700 font-medium"
+          className="inline-flex items-center text-primary-500 hover:text-primary-600 font-medium relative z-10 transition-colors duration-300 group"
         >
-          Learn More
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-1">
+          <span className="relative">
+            Learn More
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500/30 group-hover:bg-primary-500 transition-colors duration-300"></span>
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 ml-1 transition-transform duration-300 group-hover:translate-x-1">
             <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clipRule="evenodd" />
           </svg>
         </Link>

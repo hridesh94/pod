@@ -10,19 +10,19 @@
     --card-foreground: 0 0% 9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 9%;
-    --primary: 214 100% 50%;
+    --primary: 214 84% 19%;
     --primary-foreground: 210 40% 98%;
     --secondary: 35 92% 50%;
     --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 35 92% 50%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 9 64% 45%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 214 100% 50%;
+    --ring: 214 84% 19%;
     --radius: 0.5rem;
   }
 
@@ -33,43 +33,68 @@
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 38.8 92.6% 50.2%;
+    --primary: 214 84% 19%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 35 92% 50%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
+    --accent: 9 64% 45%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 217.2 91.2% 59.8%;
+    --ring: 214 84% 19%;
   }
-}
-
-@layer base {
+  
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display;
-  }
-  h1 {
-    @apply text-hero;
-  }
-  h2 {
-    @apply text-display;
-  }
-  h3 {
-    @apply text-heading;
-  }
-  h4 {
-    @apply text-subheading;
-  }
+}
+
+/* Premium design elements */
+.glass-card {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+}
+
+.premium-shadow {
+  @apply shadow-[0_8px_30px_rgba(0,0,0,0.08)];
+}
+
+.premium-shadow-lg {
+  @apply shadow-[0_15px_40px_rgba(16,46,80,0.1)];
+}
+
+.premium-gradient {
+  @apply bg-gradient-to-br from-primary-500 to-primary-700;
+}
+
+.accent-gradient {
+  @apply bg-gradient-to-br from-accent-400 to-accent-600;
+}
+
+.hover-lift {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+/* Custom scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-styled::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-styled::-webkit-scrollbar-track {
+  @apply bg-neutral-100;
+}
+
+.scrollbar-styled::-webkit-scrollbar-thumb {
+  @apply bg-primary-200 rounded-full hover:bg-primary-300;
 }
