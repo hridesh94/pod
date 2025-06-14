@@ -7,10 +7,10 @@ export const Footer = () => {
   return (
     <footer className="bg-neutral-50 border-t border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800">
       <Container>
-        <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="py-10 md:py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {/* Brand */}
-            <div className="space-y-4">
+            <div className="col-span-2 md:col-span-1 space-y-4">
               <Link href="/" className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-display font-bold">
                   H
@@ -43,12 +43,12 @@ export const Footer = () => {
               <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">
                 Quick Links
               </h4>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {NAVIGATION_ITEMS.map((item) => (
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className="text-sm text-neutral-600 hover:text-primary-500 dark:text-neutral-400 dark:hover:text-primary-500 transition-colors"
+                      className="text-sm text-neutral-600 hover:text-primary-500 dark:text-neutral-400 dark:hover:text-primary-500 transition-colors block py-1"
                     >
                       {item.name}
                     </Link>

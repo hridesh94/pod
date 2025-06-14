@@ -36,10 +36,10 @@ const Section = ({
     return (
       <motion.section
         id={id}
-        className={cn("py-section relative", className)}
+        className={cn("py-12 md:py-section relative", className)}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "-50px" }}
         variants={sectionVariants}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neutral-50/20 to-transparent dark:via-neutral-900/10 pointer-events-none opacity-50"></div>
@@ -49,7 +49,10 @@ const Section = ({
   }
 
   return (
-    <section id={id} className={cn("py-section relative", className)}>
+    <section
+      id={id}
+      className={cn("py-12 md:py-section relative", className)}
+    >
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neutral-50/20 to-transparent dark:via-neutral-900/10 pointer-events-none opacity-50"></div>
       <Container size={containerSize} className="relative z-10">{children}</Container>
     </section>

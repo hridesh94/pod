@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { randomBetween } from "@/lib/utils";
@@ -15,6 +15,7 @@ interface AudioWaveformProps {
   barMaxHeight?: number;
   playing?: boolean;
   speed?: number;
+  responsive?: boolean;
 }
 
 export const AudioWaveform = ({
@@ -27,7 +28,28 @@ export const AudioWaveform = ({
   barMaxHeight = 50,
   playing = true,
   speed = 0.6,
+  responsive = true,
 }: AudioWaveformProps) => {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Responsive adjustments for mobile
+  useEffect(() => {
+    if (responsive) {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+      
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+  }, [responsive]);
+  
+  // Adjust bar count for mobile if responsive is true
+  const responsiveBarCount = responsive && isMobile ? Math.floor(barCount * 0.6) : barCount;
+  const responsiveBarWidth = responsive && isMobile ? barWidth * 0.8 : barWidth;
+  const responsiveBarGap = responsive && isMobile ? barGap * 0.8 : barGap;
+  
   const getHeight = (i: number, total: number) => {
     // Create a pattern that gets higher in the middle
     const position = i / total;
@@ -38,8 +60,8 @@ export const AudioWaveform = ({
     return Math.max(barMinHeight, baseHeight + randomOffset * baseHeight);
   };
 
-  const bars = Array.from({ length: barCount }, (_, i) => {
-    const height = getHeight(i, barCount);
+  const bars = Array.from({ length: responsiveBarCount }, (_, i) => {
+    const height = getHeight(i, responsiveBarCount);
     return { height, delay: i * 0.02 };
   });
 
@@ -67,8 +89,8 @@ export const AudioWaveform = ({
               delay: bar.delay,
             }}
             style={{
-              width: barWidth,
-              marginRight: barGap,
+              width: responsiveBarWidth,
+              marginRight: responsiveBarGap,
               backgroundColor: color,
             }}
             className="rounded-full"

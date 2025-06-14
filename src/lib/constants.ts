@@ -154,6 +154,75 @@ export const PROCESS_STEPS = [
   },
 ];
 
+export const COMPANIES = [
+  {
+    id: 1,
+    name: "Spotify",
+    logo: "/images/companies/spotify.svg",
+    category: "Streaming Platform",
+    description: "Produced exclusive podcast content for Spotify's creator program",
+    projectType: "Content Creation",
+    color: "from-green-500 to-green-600",
+    bgAccent: "bg-green-100",
+    darkBgAccent: "dark:bg-green-900/20"
+  },
+  {
+    id: 2,
+    name: "Netflix",
+    logo: "/images/companies/netflix.svg", 
+    category: "Entertainment",
+    description: "Audio post-production for documentary series promotional content",
+    projectType: "Audio Post-Production",
+    color: "from-red-500 to-red-600",
+    bgAccent: "bg-red-100",
+    darkBgAccent: "dark:bg-red-900/20"
+  },
+  {
+    id: 3,
+    name: "Google Podcasts",
+    logo: "/images/companies/google.svg",
+    category: "Tech Platform", 
+    description: "Technical consulting for podcast optimization and distribution",
+    projectType: "Consulting",
+    color: "from-blue-500 to-blue-600",
+    bgAccent: "bg-blue-100",
+    darkBgAccent: "dark:bg-blue-900/20"
+  },
+  {
+    id: 4,
+    name: "Adobe",
+    logo: "/images/companies/adobe.svg",
+    category: "Creative Software",
+    description: "Beta testing and feedback for Adobe Audition podcast features",
+    projectType: "Product Development",
+    color: "from-purple-500 to-purple-600", 
+    bgAccent: "bg-purple-100",
+    darkBgAccent: "dark:bg-purple-900/20"
+  },
+  {
+    id: 5,
+    name: "Anchor",
+    logo: "/images/companies/anchor.svg",
+    category: "Podcast Platform",
+    description: "Content strategy and production for platform showcase podcasts",
+    projectType: "Strategy & Production",
+    color: "from-indigo-500 to-indigo-600",
+    bgAccent: "bg-indigo-100", 
+    darkBgAccent: "dark:bg-indigo-900/20"
+  },
+  {
+    id: 6,
+    name: "Riverside.fm",
+    logo: "/images/companies/riverside.svg",
+    category: "Recording Platform",
+    description: "Quality assurance and workflow optimization for remote recordings",
+    projectType: "Quality Assurance",
+    color: "from-teal-500 to-teal-600",
+    bgAccent: "bg-teal-100",
+    darkBgAccent: "dark:bg-teal-900/20"
+  }
+];
+
 export const TESTIMONIALS = [
   {
     id: 1,

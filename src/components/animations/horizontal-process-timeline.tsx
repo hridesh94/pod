@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useAnimationFrame } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { PROCESS_STEPS } from '@/lib/constants';
 
 export const HorizontalProcessTimeline = ({ className }: { className?: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const audioTime = useMotionValue(0);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -18,6 +20,11 @@ export const HorizontalProcessTimeline = ({ className }: { className?: string })
     damping: 30,
     stiffness: 90,
     mass: 0.8
+  });
+
+  // Animate audio timeline
+  useAnimationFrame(() => {
+    audioTime.set(audioTime.get() + 0.02);
   });
 
   useEffect(() => {
@@ -33,6 +40,78 @@ export const HorizontalProcessTimeline = ({ className }: { className?: string })
   }, [scrollYProgress]);
 
   const progressWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+
+  // Audio waveform component
+  const AudioWaveform = ({ isActive, stepIndex }: { isActive: boolean, stepIndex: number }) => {
+    const bars = Array.from({ length: 8 }, (_, i) => ({
+      height: Math.random() * 16 + 4,
+      delay: i * 0.1
+    }));
+
+    return (
+      <div className="flex items-end space-x-px h-5">
+        {bars.map((bar, index) => (
+          <motion.div
+            key={index}
+            className={cn(
+              "w-1 rounded-full origin-bottom",
+              isActive 
+                ? "bg-gradient-to-t from-primary-500 to-accent-500" 
+                : "bg-neutral-300 dark:bg-neutral-600"
+            )}
+            initial={{ height: 3 }}
+            animate={isActive ? {
+              height: [bar.height, bar.height * 1.5, bar.height],
+            } : { height: 3 }}
+            transition={{
+              duration: 1.5,
+              ease: "easeInOut",
+              repeat: isActive ? Infinity : 0,
+              repeatType: "reverse",
+              delay: bar.delay,
+            }}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  // Get step icon based on icon name
+  const getStepIcon = (iconName: string) => {
+    const icons = {
+      mic: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+        </svg>
+      ),
+      strategy: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
+        </svg>
+      ),
+      settings: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+        </svg>
+      ),
+      edit: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+        </svg>
+      ),
+      chart: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M5,12L2,15L5,18V15.5H9.5V12.5H5V12M19,7V4L16,7H18.5V11.5H21.5V7H19M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z"/>
+        </svg>
+      ),
+      distribution: (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M21,16V14L13,9V7.5L16,4.5L15.29,3.79L13,6.08L10.71,3.79L10,4.5L13,7.5V9L5,14V16L13,12.5V14L9,17V18.5L13,16.5L17,18.5V17L13,14V12.5L21,16Z"/>
+        </svg>
+      )
+    };
+    return icons[iconName as keyof typeof icons] || null;
+  };
 
   return (
     <div ref={containerRef} className={cn("w-full py-20", className)}>

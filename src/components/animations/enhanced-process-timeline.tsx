@@ -17,6 +17,18 @@ export const EnhancedProcessTimeline: React.FC<EnhancedProcessTimelineProps> = (
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect if we're on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -52,12 +64,42 @@ export const EnhancedProcessTimeline: React.FC<EnhancedProcessTimelineProps> = (
       );
       setActiveStep(newActiveStep);
     });
-    
-    return () => unsubscribe();
+    return unsubscribe;
   }, [scrollYProgress]);
 
-  const progressWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
-  const backgroundOffset = useTransform(smoothProgress, [0, 1], ["0%", "50%"]);
+  // Magnetic movement calculation
+  const calculateMagneticMovement = (index: number) => {
+    const stepElement = document.getElementById(`step-${index}`);
+    if (!stepElement) return { x: 0, y: 0 };
+    
+    const rect = stepElement.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Calculate distance from mouse to element center
+    const distX = (mouseX.get() - centerX) / 15;
+    const distY = (mouseY.get() - centerY) / 15;
+    
+    // Magnetic effect is stronger when closer to the element
+    const maxDistance = 100;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+    
+    if (distance > maxDistance) return { x: 0, y: 0 };
+    
+    const strength = (maxDistance - distance) / maxDistance;
+    return { x: distX * strength, y: distY * strength };
+  };
+
+  // Calculate dot positions (only for mobile)
+  const getStartDotPosition = (index: number) => {
+    if (!isMobile) return {};
+    return { top: 0 };
+  };
+
+  const getEndDotPosition = (index: number) => {
+    if (!isMobile) return {};
+    return { bottom: 0 };
+  };
 
   // Audio waveform bars for the timeline
   const WaveformBars = ({ isActive, stepIndex }: { isActive: boolean, stepIndex: number }) => {
@@ -257,8 +299,7 @@ export const EnhancedProcessTimeline: React.FC<EnhancedProcessTimelineProps> = (
               className="absolute inset-0 opacity-5"
               style={{
                 backgroundImage: `radial-gradient(circle at 20% 50%, ${isActive ? '#3b82f6' : '#6b7280'} 2px, transparent 2px)`,
-                backgroundSize: '30px 30px',
-                x: backgroundOffset
+                backgroundSize: '30px 30px'
               }}
             />
             
@@ -326,160 +367,110 @@ export const EnhancedProcessTimeline: React.FC<EnhancedProcessTimelineProps> = (
   };
 
   return (
-    <div ref={containerRef} className={cn("w-full py-16", className)}>
-      {/* Desktop Timeline */}
-      <div className="hidden lg:block relative max-w-7xl mx-auto px-6">
-        {/* Background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div 
-            className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-200 to-transparent dark:via-neutral-700"
-            style={{ y: backgroundOffset }}
-          />
-        </div>
-
-        <div className="relative">
-          {/* Enhanced timeline container */}
-          <div className="relative mx-[8.33%]">
-            {/* Main timeline line with gradient */}
-            <div className="absolute top-[39px] left-[16px] right-[16px] h-1 bg-gradient-to-r from-neutral-200 via-neutral-300 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 rounded-full" />
-            
-            {/* Animated progress line with audio visualization */}
-            <motion.div 
-              className="absolute top-[39px] left-[16px] h-1 rounded-full overflow-hidden"
-              style={{ width: progressWidth }}
-            >
-              <motion.div
-                className="h-full bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500"
-                animate={{
-                  x: ["-100%", "100%"]
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  ease: "linear"
-                }}
-              />
-            </motion.div>
-          </div>
-          
-          {/* Steps container */}
-          <div className="grid grid-cols-6 gap-4">
-            {PROCESS_STEPS.map((step, index) => {
-              const isActive = index === activeStep;
-              
-              return (
-                <MagneticStep 
-                  key={step.id} 
-                  step={step} 
-                  index={index} 
-                  isActive={isActive}
-                />
-              );
-            })}
-          </div>
-        </div>
+    <div 
+      ref={containerRef} 
+      className={cn("relative min-h-[700px] md:min-h-[900px] py-12", className)}
+    >
+      {/* Progress line */}
+      <div className="absolute left-3 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-neutral-200 to-transparent">
+        <motion.div 
+          className="absolute left-0 top-0 w-full bg-primary-500"
+          style={{ 
+            height: useTransform(smoothProgress, [0, 1], ['0%', '100%']) 
+          }}
+        />
       </div>
-
-      {/* Mobile Timeline - Enhanced */}
-      <div className="block lg:hidden px-4">
-        <div className="relative pl-12 space-y-8">
-          {/* Vertical line with pulse animation */}
-          <div className="absolute left-[23px] top-[40px] bottom-[40px] w-1 bg-gradient-to-b from-neutral-200 via-neutral-300 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 rounded-full" />
-          
-          {/* Animated progress line */}
+      
+      {/* Process steps */}
+      {PROCESS_STEPS.map((step, index) => {
+        // Calculate if step should be on left or right side
+        const isLeft = index % 2 === 0;
+        const isActive = activeStep >= index;
+        const isHovered = hoveredStep === index;
+        
+        return (
           <motion.div 
-            className="absolute left-[23px] top-[40px] w-1 bg-gradient-to-b from-primary-500 to-accent-500 rounded-full origin-top"
-            style={{ 
-              height: useTransform(smoothProgress, [0, 1], ["0%", "100%"])
-            }}
-          />
-          
-          {PROCESS_STEPS.map((step, index) => {
-            const isActive = index === activeStep;
-            
-            return (
-              <motion.div 
-                key={step.id}
-                className="relative"
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true, margin: "-50px" }}
+            key={step.id}
+            id={`step-${index}`}
+            className={cn(
+              "relative mb-16 md:mb-24 last:mb-0 flex md:block",
+              isMobile ? "ml-10" : isLeft ? "md:pr-[50%] md:pl-0" : "md:pl-[50%] md:pr-0"
+            )}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            onMouseEnter={() => setHoveredStep(index)}
+            onMouseLeave={() => setHoveredStep(null)}
+            style={isHovered && !isMobile ? {
+              x: calculateMagneticMovement(index).x,
+              y: calculateMagneticMovement(index).y
+            } : {}}
+          >
+            {/* Mobile timeline dot - START */}
+            {isMobile && (
+              <div 
+                className={cn(
+                  "absolute left-[-14px] top-0 w-7 h-7 rounded-full border-2 flex items-center justify-center",
+                  isActive 
+                    ? "bg-white border-primary-500 text-primary-500" 
+                    : "bg-white border-neutral-300 text-neutral-400"
+                )}
               >
-                {/* Mobile step marker */}
-                <motion.div 
-                  className="absolute left-[-23px] top-[40px]"
-                  animate={{
-                    scale: isActive ? 1.2 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className={cn(
-                    "w-6 h-6 rounded-full border-2 relative bg-white dark:bg-neutral-900",
-                    isActive 
-                      ? "border-primary-500" 
-                      : "border-neutral-300 dark:border-neutral-600"
-                  )}>
-                    <motion.div 
-                      className={cn(
-                        "absolute top-1/2 left-1/2 w-2 h-2 rounded-full -translate-x-1/2 -translate-y-1/2",
-                        isActive 
-                          ? "bg-gradient-to-br from-primary-500 to-accent-500" 
-                          : "bg-neutral-400"
-                      )}
-                      animate={{
-                        scale: isActive ? [1, 1.3, 1] : 1,
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: isActive ? Infinity : 0,
-                        repeatType: "reverse"
-                      }}
-                    />
-                  </div>
-                </motion.div>
+                <span className="text-xs font-bold">{index + 1}</span>
+              </div>
+            )}
 
-                {/* Mobile content card */}
-                <motion.div 
+            {/* Timeline content */}
+            <div 
+              className={cn(
+                "bg-white rounded-xl p-5 md:p-6 shadow-md transition-all duration-300 flex-1 border",
+                isActive ? "border-primary-200" : "border-neutral-200",
+                isHovered && "shadow-lg"
+              )}
+            >
+              <div className="flex items-center mb-4">
+                {/* Desktop timeline dot */}
+                {!isMobile && (
+                  <div 
+                    className={cn(
+                      "mr-3 w-8 h-8 rounded-full border-2 flex items-center justify-center",
+                      isActive 
+                        ? "bg-white border-primary-500 text-primary-500" 
+                        : "bg-white border-neutral-300 text-neutral-400"
+                    )}
+                  >
+                    <span className="text-xs font-bold">{index + 1}</span>
+                  </div>
+                )}
+                <h3 
                   className={cn(
-                    "p-6 rounded-xl relative overflow-hidden",
-                    "bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm",
-                    "border transition-all duration-300",
-                    isActive
-                      ? "border-primary-200 dark:border-primary-800 shadow-lg shadow-primary-100/50 dark:shadow-primary-900/50"
-                      : "border-neutral-200 dark:border-neutral-800 shadow-md"
+                    "font-display font-semibold text-lg md:text-xl transition-colors",
+                    isActive ? "text-primary-500" : "text-neutral-600"
                   )}
-                  animate={{
-                    y: isActive ? -2 : 0,
-                  }}
                 >
-                  <div className="absolute top-3 right-3">
-                    <WaveformBars isActive={isActive} stepIndex={index} />
-                  </div>
-                  
-                  <div className={cn(
-                    "text-xs font-semibold mb-3 tracking-wide",
-                    isActive 
-                      ? "text-primary-600 dark:text-primary-400" 
-                      : "text-neutral-500"
-                  )}>
-                    STEP {step.id}
-                  </div>
-                  
-                  <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white mb-3">
-                    {step.title}
-                  </h3>
-                  
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    {step.description}
-                  </p>
-                </motion.div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+                  {step.title}
+                </h3>
+              </div>
+              <p className="text-sm md:text-base text-neutral-600">{step.description}</p>
+            </div>
+            
+            {/* Mobile timeline dot - END */}
+            {isMobile && (
+              <div 
+                className={cn(
+                  "absolute left-[-14px] bottom-0 w-7 h-7 rounded-full border-2 flex items-center justify-center",
+                  isActive 
+                    ? "bg-white border-primary-500 text-primary-500" 
+                    : "bg-white border-neutral-300 text-neutral-400"
+                )}
+              >
+                <span className="text-xs font-bold">{index + 1}</span>
+              </div>
+            )}
+          </motion.div>
+        );
+      })}
     </div>
   );
 };

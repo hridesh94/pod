@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FadeInUp } from "../../components/animations/fade-in-up";
 import { Button } from "../../components/ui/button";
 import { Section } from "../../components/ui/section";
 import { StaggerContainer, StaggerItem } from "../../components/animations/stagger-container";
 import Link from "next/link";
-import { SERVICES, TESTIMONIALS, PRICING, PROCESS_STEPS } from "../../lib/constants";
+import { SERVICES, TESTIMONIALS, PRICING, PROCESS_STEPS, COMPANIES } from "../../lib/constants";
 import { ParallaxSection } from "../../components/animations/parallax-section";
 import { AudioWaveform } from "../../components/animations/audio-waveform";
 import { Header } from "../../components/sections/header";
@@ -17,6 +17,7 @@ import { ProcessTimeline } from "@/components/animations/process-timeline";
 import { SubwayProcessTimeline } from "@/components/animations/subway-process-timeline";
 import { SubwayProcessStep } from "@/components/ui/subway-process-step";
 import { useProcessScroll } from "@/lib/hooks/use-process-scroll";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -28,21 +29,35 @@ export default function HomePage() {
   const jsonLdData = generateJsonLd();
   // Track active process steps based on scroll position
   const activeSteps = useProcessScroll(PROCESS_STEPS.length);
+  // Check for reduced motion preference or low-power device
+  const shouldReduceMotion = useReducedMotion();
+  // Detect mobile viewport
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   return (
     <main>
       <JsonLdScript data={jsonLdData} />
       {/* Hero Section */}
-      <Section className="pt-32 pb-20 bg-gradient-to-b from-primary-50 to-white dark:from-neutral-900 dark:to-neutral-900">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <Section className="pt-24 md:pt-32 pb-16 md:pb-20 bg-gradient-to-b from-primary-50 to-white dark:from-neutral-900 dark:to-neutral-900">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
             <FadeInUp>
-              <h1 className="text-hero font-display font-bold text-neutral-900 dark:text-white mb-6">
+              <h1 className="text-4xl md:text-hero font-display font-bold text-neutral-900 dark:text-white mb-4 md:mb-6">
                 Hi, I am Hridesh Sapkota
               </h1>
             </FadeInUp>
             <FadeInUp delay={0.1}>
-              <p className="text-xl mb-8 text-neutral-700 dark:text-neutral-200">
+              <p className="text-lg md:text-xl mb-6 md:mb-8 text-neutral-700 dark:text-neutral-200">
                 A freelance podcast producer with 4+ years of experience in
                 helping clients plan, craft and publish their podcast in both
                 audio and visual format.
@@ -50,24 +65,24 @@ export default function HomePage() {
             </FadeInUp>
             <FadeInUp delay={0.2}>
               <div className="flex flex-wrap gap-4">
-                <Link href="/contact">
-                  <Button isAnimated>Start a Project</Button>
+                <Link href="/contact" className="w-full sm:w-auto">
+                  <Button isAnimated className="w-full sm:w-auto py-5 sm:py-auto text-base md:text-sm">Start a Project</Button>
                 </Link>
-                <Link href="/portfolio">
-                  <Button isAnimated variant="outline">View Portfolio</Button>
+                <Link href="/portfolio" className="w-full sm:w-auto">
+                  <Button isAnimated variant="outline" className="w-full sm:w-auto py-5 sm:py-auto text-base md:text-sm">View Portfolio</Button>
                 </Link>
               </div>
             </FadeInUp>
           </div>
-          <div className="relative">
+          <div className="relative mt-8 lg:mt-0">
             <FadeInUp delay={0.3}>
-              <div className="relative w-full h-96 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl overflow-hidden shadow-xl">
+              <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl overflow-hidden shadow-xl">
                 {/* This would be an image or animation in a real implementation */}
                 <div className="absolute bottom-6 left-0 w-full px-8">
                   <AudioWaveform
-                    className="h-24"
+                    className="h-16 md:h-24"
                     color="rgba(255, 255, 255, 0.7)"
-                    barCount={48}
+                    barCount={32}
                     barWidth={3}
                     barGap={2}
                     barMinHeight={5}
@@ -82,12 +97,12 @@ export default function HomePage() {
 
       {/* About Section */}
       <Section id="about">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className="order-2 lg:order-1">
             <FadeInUp>
-              <div className="w-full h-80 bg-neutral-100 dark:bg-neutral-800 rounded-xl shadow-inner flex items-center justify-center">
+              <div className="w-full h-60 sm:h-80 bg-neutral-100 dark:bg-neutral-800 rounded-xl shadow-inner flex items-center justify-center">
                 {/* This would be an image in a real implementation */}
-                <div className="text-4xl font-display font-bold bg-gradient-to-r from-primary-500 to-accent-500 text-transparent bg-clip-text">
+                <div className="text-3xl md:text-4xl font-display font-bold bg-gradient-to-r from-primary-500 to-accent-500 text-transparent bg-clip-text">
                   4+ Years Experience
                 </div>
               </div>
@@ -95,7 +110,7 @@ export default function HomePage() {
           </div>
           <div className="order-1 lg:order-2">
             <FadeInUp>
-              <h2 className="text-3xl font-display font-bold mb-6">About Me</h2>
+              <h2 className="text-2xl md:text-3xl font-display font-bold mb-4 md:mb-6">About Me</h2>
               <p className="mb-4 text-neutral-700 dark:text-neutral-300">
                 I'm a podcast production specialist with extensive experience in
                 audio editing, video production, and podcast strategy. My
@@ -108,7 +123,7 @@ export default function HomePage() {
                 is to make the podcasting process seamless while delivering
                 exceptional results.
               </p>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="w-full sm:w-auto py-5 sm:py-auto text-base md:text-sm">
                 <Link href="/about">Learn More About Me</Link>
               </Button>
             </FadeInUp>
@@ -172,21 +187,187 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* Process Section - Updated with horizontal timeline */}
-      <Section id="process" className="bg-white dark:bg-neutral-900 overflow-hidden relative">
-        <div className="text-center mb-12">
+      {/* Companies Section - Infinite Scrolling Logos */}
+      <Section id="companies" className="bg-neutral-50 dark:bg-neutral-800">
+        <div className="text-center mb-8 md:mb-16">
           <FadeInUp>
-            <h2 className="text-3xl font-display font-bold mb-4">My Production Process</h2>
+            <h2 className="text-2xl md:text-3xl font-display font-bold mb-3 md:mb-4">Trusted by Industry Leaders</h2>
             <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
-              A streamlined 6-step framework that transforms your podcast vision into professional reality
+              Collaborating with top platforms and brands in podcasting and entertainment
             </p>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-6 rounded-full"></div>
           </FadeInUp>
         </div>
 
-        <div className="relative max-w-full mx-auto">
-          <HorizontalProcessTimeline />
+        {/* Infinite Scrolling Logo Marquee */}
+        <div className="relative overflow-hidden py-6 md:py-8">
+          {/* Gradient masks for smooth fade */}
+          <div className="absolute left-0 top-0 bottom-0 w-10 md:w-20 bg-gradient-to-r from-neutral-50 via-neutral-50 to-transparent dark:from-neutral-800 dark:via-neutral-800 z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-10 md:w-20 bg-gradient-to-l from-neutral-50 via-neutral-50 to-transparent dark:from-neutral-800 dark:via-neutral-800 z-10" />
+          
+          {/* Scrolling container - Added padding to prevent tooltip cutoff */}
+          <div className="py-6 md:py-12">
+            <motion.div 
+              className="flex space-x-8 md:space-x-16"
+              animate={{ x: [0, -50 * 16] }} // Move by 50% of total width
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 25,
+                  ease: "linear",
+                },
+              }}
+            >
+              {/* Duplicate the companies array for seamless loop */}
+              {[...COMPANIES, ...COMPANIES].map((company, index) => (
+                <motion.div
+                  key={`${company.id}-${index}`}
+                  className="flex-shrink-0 group cursor-pointer relative"
+                  whileHover={{ 
+                    scale: 1.1,
+                    rotate: [0, -2, 2, 0]
+                  }}
+                  transition={{ 
+                    duration: 0.3,
+                    type: "spring",
+                    stiffness: 300
+                  }}
+                >
+                  {/* Logo container with hover effects */}
+                  <div className={cn(
+                    "w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center relative",
+                    "bg-white dark:bg-neutral-900 shadow-md",
+                    "border border-neutral-200 dark:border-neutral-700",
+                    "group-hover:shadow-lg group-hover:border-primary-300 dark:group-hover:border-primary-700",
+                    "transition-all duration-300 overflow-hidden"
+                  )}>
+                    {/* Animated background gradient on hover */}
+                    <motion.div 
+                      className={cn(
+                        "absolute inset-0 opacity-0 group-hover:opacity-10",
+                        "bg-gradient-to-br transition-opacity duration-300",
+                        company.color
+                      )}
+                    />
+                    
+                    {/* Company logo (placeholder) */}
+                    <div className={cn(
+                      "w-8 h-8 md:w-10 md:h-10 rounded-lg relative z-10",
+                      "bg-gradient-to-br transition-transform duration-300",
+                      "group-hover:scale-110",
+                      company.color
+                    )}>
+                      {/* In real implementation, replace with actual SVG logos */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white font-bold text-xs">
+                          {company.name.charAt(0)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Hover glow effect */}
+                    <motion.div 
+                      className={cn(
+                        "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20",
+                        "bg-gradient-to-r blur-sm transition-opacity duration-300",
+                        company.color
+                      )}
+                      animate={{
+                        scale: [1, 1.05, 1],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }}
+                    />
+                  </div>
+
+                  {/* Company name tooltip on hover - Fixed positioning */}
+                  <motion.div
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
+                    initial={{ y: 5 }}
+                    whileHover={{ y: 0 }}
+                  >
+                    <div className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xs font-medium px-3 py-1 rounded-lg whitespace-nowrap shadow-lg">
+                      {company.name}
+                      {/* Tooltip arrow */}
+                      <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-neutral-900 dark:bg-white rotate-45"></div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
+      </Section>
+
+      {/* Process Section - Updated with horizontal timeline */}
+      <Section id="process" className="bg-white dark:bg-neutral-900 overflow-hidden relative">
+        <div className="text-center mb-8 md:mb-12">
+          <FadeInUp>
+            <h2 className="text-2xl md:text-3xl font-display font-bold mb-3 md:mb-4">My Production Process</h2>
+            <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
+              A streamlined 6-step framework that transforms your podcast vision into professional reality
+            </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-accent-500 mx-auto mt-4 md:mt-6 rounded-full"></div>
+          </FadeInUp>
+        </div>
+
+        {/* Use different components for mobile and desktop for better performance */}
+        {isMobile ? (
+          <div className="relative max-w-full mx-auto">
+            {/* Mobile optimized vertical timeline - uses less animations for better performance */}
+            <div className="px-2">
+              {PROCESS_STEPS.map((step, index) => (
+                <div 
+                  key={step.id} 
+                  className={cn(
+                    "mb-8 last:mb-0 relative pl-12 pb-8 border-l-2",
+                    activeSteps[index] ? "border-primary-500" : "border-neutral-200 dark:border-neutral-700"
+                  )}
+                >
+                  {/* Step marker */}
+                  <div 
+                    className={cn(
+                      "absolute left-[-9px] top-0 w-4 h-4 rounded-full",
+                      activeSteps[index]
+                        ? "bg-primary-500" 
+                        : "bg-neutral-300 dark:bg-neutral-600"
+                    )}
+                  />
+                  
+                  {/* Step content */}
+                  <div className="relative">
+                    <div className={cn(
+                      "inline-block px-3 py-1 text-xs font-medium rounded-full mb-2",
+                      activeSteps[index]
+                        ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
+                        : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
+                    )}>
+                      Step {index + 1}
+                    </div>
+                    <h3 className={cn(
+                      "text-lg font-medium mb-2",
+                      activeSteps[index]
+                        ? "text-primary-600 dark:text-primary-400"
+                        : "text-neutral-600 dark:text-neutral-400"
+                    )}>
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="relative max-w-full mx-auto">
+            <HorizontalProcessTimeline />
+          </div>
+        )}
       </Section>
 
       {/* Portfolio Preview Section */}
@@ -325,9 +506,9 @@ export default function HomePage() {
 
       {/* Testimonials Section */}
       <Section id="testimonials">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-16">
           <FadeInUp>
-            <h2 className="text-3xl font-display font-bold mb-4">
+            <h2 className="text-2xl md:text-3xl font-display font-bold mb-3 md:mb-4">
               Client Testimonials
             </h2>
             <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
@@ -336,56 +517,119 @@ export default function HomePage() {
           </FadeInUp>
         </div>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((testimonial, index) => (
-            <StaggerItem key={testimonial.id} index={index}>
-              <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl shadow-md border border-neutral-100 dark:border-neutral-700">
-                <div className="flex items-center mb-4">
-                  {Array.from({ length: 5 }).map((_, starIndex) => (
-                    <svg
-                      key={starIndex}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 ${
-                        starIndex < testimonial.rating
-                          ? "text-accent-500"
-                          : "text-neutral-300"
-                      }`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-
-                <p className="text-neutral-700 dark:text-neutral-300 mb-6 italic">
-                  "{testimonial.content}"
-                </p>
-
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-neutral-700 flex items-center justify-center">
-                    <span className="font-medium text-primary-500 dark:text-primary-400">
-                      {testimonial.name[0]}
-                    </span>
+        {/* Desktop Grid Layout */}
+        <div className="hidden md:block">
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {TESTIMONIALS.map((testimonial, index) => (
+              <StaggerItem key={testimonial.id} index={index}>
+                <div className="bg-white dark:bg-neutral-800 p-8 rounded-xl shadow-md border border-neutral-100 dark:border-neutral-700">
+                  <div className="flex items-center mb-4">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <svg
+                        key={starIndex}
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`h-5 w-5 ${
+                          starIndex < testimonial.rating
+                            ? "text-accent-500"
+                            : "text-neutral-300"
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
                   </div>
-                  <div className="ml-3">
-                    <h4 className="font-medium">{testimonial.name}</h4>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                      {testimonial.title}
-                    </p>
+
+                  <p className="text-neutral-700 dark:text-neutral-300 mb-6 italic">
+                    "{testimonial.content}"
+                  </p>
+
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-neutral-700 flex items-center justify-center">
+                      <span className="font-medium text-primary-500 dark:text-primary-400">
+                        {testimonial.name[0]}
+                      </span>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="font-medium">{testimonial.name}</h4>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {testimonial.title}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+
+        {/* Mobile Touch Carousel */}
+        <div className="md:hidden relative px-1">
+          <div className="overflow-x-auto no-scrollbar">
+            <div className="flex space-x-4 pb-6 px-2">
+              {TESTIMONIALS.map((testimonial, index) => (
+                <div 
+                  key={testimonial.id}
+                  className="flex-shrink-0 w-[85%] bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-md border border-neutral-100 dark:border-neutral-700"
+                >
+                  <div className="flex items-center mb-4">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <svg
+                        key={starIndex}
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`h-4 w-4 ${
+                          starIndex < testimonial.rating
+                            ? "text-accent-500"
+                            : "text-neutral-300"
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+
+                  <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-4 italic line-clamp-4">
+                    "{testimonial.content}"
+                  </p>
+
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-neutral-700 flex items-center justify-center">
+                      <span className="font-medium text-primary-500 dark:text-primary-400">
+                        {testimonial.name[0]}
+                      </span>
+                    </div>
+                    <div className="ml-2">
+                      <h4 className="font-medium text-sm">{testimonial.name}</h4>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        {testimonial.title}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Scroll indicator */}
+          <div className="flex justify-center mt-4 space-x-2">
+            {TESTIMONIALS.map((_, index) => (
+              <div 
+                key={index} 
+                className={`h-1.5 rounded-full ${index === 0 ? 'w-6 bg-primary-500' : 'w-1.5 bg-neutral-300'}`}
+              />
+            ))}
+          </div>
+        </div>
       </Section>
 
       {/* Pricing Preview Section */}
       <Section id="pricing" className="bg-neutral-50 dark:bg-neutral-800">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-16">
           <FadeInUp>
-            <h2 className="text-3xl font-display font-bold mb-4">
+            <h2 className="text-2xl md:text-3xl font-display font-bold mb-3 md:mb-4">
               Pricing Plans
             </h2>
             <p className="max-w-2xl mx-auto text-neutral-700 dark:text-neutral-300">
@@ -394,82 +638,151 @@ export default function HomePage() {
           </FadeInUp>
         </div>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {PRICING.map((plan, index) => (
-            <StaggerItem key={plan.id} index={index}>
-              <div
-                className={`bg-white dark:bg-neutral-900 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow ${
-                  plan.popular
-                    ? "ring-2 ring-primary-500 dark:ring-primary-400"
-                    : ""
-                }`}
-              >
-                {plan.popular && (
-                  <div className="bg-primary-500 text-white text-center py-2 text-sm font-medium">
-                    Most Popular
-                  </div>
-                )}
-                <div className="p-8">
-                  <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 mb-6">
-                    {plan.description}
-                  </p>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold">${plan.price}</span>
-                    <span className="text-neutral-500 dark:text-neutral-400">
-                      {" "}
-                      / Episode
-                    </span>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center text-neutral-700 dark:text-neutral-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-primary-500 mr-2"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
+        {/* Desktop Grid Layout */}
+        <div className="hidden md:block">
+          <StaggerContainer className="grid md:grid-cols-3 gap-8">
+            {PRICING.map((plan, index) => (
+              <StaggerItem key={plan.id} index={index}>
+                <div
+                  className={`bg-white dark:bg-neutral-900 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow ${
+                    plan.popular
+                      ? "ring-2 ring-primary-500 dark:ring-primary-400"
+                      : ""
+                  }`}
+                >
+                  {plan.popular && (
+                    <div className="bg-primary-500 text-white text-center py-2 text-sm font-medium">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="p-8">
+                    <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
+                    <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+                      {plan.description}
+                    </p>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold">${plan.price}</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">
+                        {" "}
+                        / Episode
+                      </span>
+                    </div>
+                    <ul className="space-y-3 mb-8">
+                      {plan.features.map((feature, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center text-neutral-700 dark:text-neutral-300"
                         >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    isAnimated
-                    className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    <Link href="/contact">Choose Plan</Link>
-                  </Button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-primary-500 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      asChild
+                      isAnimated
+                      className="w-full"
+                      variant={plan.popular ? "default" : "outline"}
+                    >
+                      <Link href="/contact">Choose Plan</Link>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
 
-        <div className="mt-8 text-center">
-          <FadeInUp>
-            <p className="text-neutral-600 dark:text-neutral-400">
-              Customized plans available as per need. 
-              <Link
-                href="/contact"
-                className="text-primary-500 hover:underline ml-1"
-              >
-                Contact me
-              </Link>{" "}
-              for details.
-            </p>
-          </FadeInUp>
+        {/* Mobile Touch Carousel */}
+        <div className="md:hidden">
+          <div className="overflow-x-auto no-scrollbar pb-2">
+            <div className="flex space-x-5 px-2 pb-4 snap-x snap-mandatory">
+              {PRICING.map((plan, index) => (
+                <div 
+                  key={plan.id}
+                  className={`flex-shrink-0 w-[85%] snap-center bg-white dark:bg-neutral-900 rounded-xl overflow-hidden shadow-md ${
+                    plan.popular
+                      ? "ring-2 ring-primary-500 dark:ring-primary-400"
+                      : ""
+                  }`}
+                >
+                  {plan.popular && (
+                    <div className="bg-primary-500 text-white text-center py-1.5 text-sm font-medium">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold mb-2">{plan.name}</h3>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                      {plan.description}
+                    </p>
+                    <div className="mb-4">
+                      <span className="text-3xl font-bold">${plan.price}</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">
+                        {" "}
+                        / Episode
+                      </span>
+                    </div>
+                    <ul className="space-y-2 mb-6 text-sm">
+                      {plan.features.slice(0, 4).map((feature, i) => (
+                        <li
+                          key={i}
+                          className="flex items-center text-neutral-700 dark:text-neutral-300"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 flex-shrink-0 text-primary-500 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="line-clamp-1">{feature}</span>
+                        </li>
+                      ))}
+                      {plan.features.length > 4 && (
+                        <li className="text-xs text-primary-500 pl-6">
+                          +{plan.features.length - 4} more features
+                        </li>
+                      )}
+                    </ul>
+                    <Button
+                      asChild
+                      className="w-full py-5 text-base"
+                      variant={plan.popular ? "default" : "outline"}
+                    >
+                      <Link href="/contact">Choose Plan</Link>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Scroll indicator */}
+          <div className="flex justify-center mt-4 space-x-2">
+            {PRICING.map((_, index) => (
+              <div 
+                key={index} 
+                className={`h-1.5 rounded-full ${index === 0 ? 'w-6 bg-primary-500' : 'w-1.5 bg-neutral-300'}`}
+              />
+            ))}
+          </div>
         </div>
       </Section>
 
